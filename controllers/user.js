@@ -1,4 +1,7 @@
-import { request, response } from "express"
+import { request, response } from "express";
+import Usuario from "../models/usuario.js";
+import bcryptjs from "bcryptjs";
+import { validationResult } from "express-validator";
 
 
 export const usuariosGet = (req = request , res = response) => {
@@ -24,14 +27,34 @@ export const usuariosPut = (req = request , res = response) => {
     })
 }
 
-export const usuariosPost = (req = request , res = response) => {
+export const usuariosPost = async (req = request , res = response) => {
+    const errors = validationResult(req);
+    if ( !errors.isEmpty() ) {
+        return res.status(400).json(errors)
+    };
+
+    const { nombre, correo, password, rol } = req.body;
+    //creacion de la instancia 
+    const usuario = new Usuario( { nombre, correo, password, rol } );
     
-    const { nombre, edad } = req.body;
+    // Verificar si el correo existe
+    const validacionCorreo = await Usuario.findOne({ correo });
+    if ( validacionCorreo ) {
+        return res.status(400).json({
+            msg: `El correo ${ correo } ya esta registrado`
+        });
+    };
+
+
+    // Encriptar la contraseña (HASH)
+    const salt = bcryptjs.genSaltSync(10);
+    usuario.password = bcryptjs.hashSync( password, salt );
+
+    //grabar registro
+    await usuario.save();
 
     res.json({
-        msg: 'post API - controlador',
-        nombre,
-        edad,
+        usuario,
     })
 }
 
