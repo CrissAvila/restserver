@@ -28,23 +28,10 @@ export const usuariosPut = (req = request , res = response) => {
 }
 
 export const usuariosPost = async (req = request , res = response) => {
-    const errors = validationResult(req);
-    if ( !errors.isEmpty() ) {
-        return res.status(400).json(errors)
-    };
 
     const { nombre, correo, password, rol } = req.body;
     //creacion de la instancia 
     const usuario = new Usuario( { nombre, correo, password, rol } );
-    
-    // Verificar si el correo existe
-    const validacionCorreo = await Usuario.findOne({ correo });
-    if ( validacionCorreo ) {
-        return res.status(400).json({
-            msg: `El correo ${ correo } ya esta registrado`
-        });
-    };
-
 
     // Encriptar la contraseña (HASH)
     const salt = bcryptjs.genSaltSync(10);
