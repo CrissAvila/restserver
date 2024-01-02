@@ -1,29 +1,25 @@
 import { request, response } from "express";
-import Usuario from "../models/usuario.js";
 import bcryptjs from "bcryptjs";
-import { validationResult } from "express-validator";
+
+import Usuario from "../models/usuario.js";
 
 
-export const usuariosGet = (req = request , res = response) => {
+export const usuariosGet = async (req = request , res = response) => {
     
-    const { q, nombre = 'No name', apikey, page = 1, limit } = req.query;
-    res.json({
-        msg: 'get API - controlador',
-        q,
-        nombre,
-        apikey,
-        page,
-        limit,
-    })
-}
-
-export const usuariosPut = (req = request , res = response) => {
-    
-    const { id } = req.params;
+    const { limite = 5, desde = 0 } = req.query;
+    const estadoQuery = { estado: true }
+   
+    //Coleccion de promesas, para ejecutar promesas de forma simultanea 
+    const [ totalUsuarios, usuarios ] = await Promise.all([
+        Usuario.countDocuments( estadoQuery ),
+        Usuario.find( estadoQuery )
+        .skip( desde )
+        .limit( limite ),
+    ]);
 
     res.json({
-        msg: 'put API - controlador',
-        id,
+        totalUsuarios,
+        usuarios
     })
 }
 
@@ -45,10 +41,38 @@ export const usuariosPost = async (req = request , res = response) => {
     })
 }
 
-export const usuariosDelete = (req = request , res = response) => {
+export const usuariosPut = async(req = request , res = response) => {
     
+    const id = req.params.id;
+    const { _id ,password, google, correo, ...resto } = req.body;
+
+    //TODO validar contra base de datos
+    if ( password ) {
+        //Encriptar la contraseña
+        const salt = bcryptjs.genSaltSync(10);
+        resto.password = bcryptjs.hashSync( password, salt );
+    }
+
+    const usuario = await Usuario.findByIdAndUpdate( id, resto, { new: true});
+
+    res.json(usuario)
+}
+
+
+export const usuariosDelete = async(req = request , res = response) => {
+    
+    const { id } = req.params;
+
+    //Borrar fisicamente un Usuario en DB
+    //TODO const borrarUsuario = await Usuario.findByIdAndDelete(id);
+
+    //Borrar usuario cambiando el estado en DB
+    const borrarUsuario = await Usuario.findByIdAndUpdate( id, { estado: false });
+
     res.json({
         msg: 'delete API - controlador',
+        msg: `Se Elimino el usuario ${ id } correctamente(estado:false)`, 
+        borrarUsuario,
     })
 }
 

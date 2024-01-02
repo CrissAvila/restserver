@@ -2,7 +2,7 @@ import { Router } from "express";
 import { check } from "express-validator";
 
 import { validarCampos } from "../middlewares/validar-campos.js";
-import { emailExiste, esRolValido,  }from "../helpers/db-validators.js";
+import { emailExiste, esRolValido, existeUsuarioPorId,  }from "../helpers/db-validators.js";
 
 import { usuariosGet, 
          usuariosPut, 
@@ -14,7 +14,12 @@ const router = Router();
 
 router.get('/', usuariosGet );
 
-router.put('/:id', usuariosPut);
+router.put('/:id',[
+    check('id').custom( existeUsuarioPorId ),
+    check('id', 'No es un ID valido').isMongoId(),
+    check('rol',).custom( esRolValido ),
+    validarCampos,
+], usuariosPut );
 
 router.post('/', [
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
@@ -26,7 +31,11 @@ router.post('/', [
     validarCampos
 ], usuariosPost );
 
-router.delete('/', usuariosDelete);
+router.delete('/:id',[
+    check('id').custom( existeUsuarioPorId ),
+    check('id', 'No es un ID valido').isMongoId(),
+    validarCampos
+], usuariosDelete);
 
 router.patch('/', usuariosPatch);
 

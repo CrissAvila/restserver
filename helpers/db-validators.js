@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Role from "../models/role.js";
 import Usuario from "../models/usuario.js";
 
@@ -8,7 +9,7 @@ export const esRolValido = async ( rol = '' ) => {
     }
 };
 
-export const emailExiste = async( correo = ' ') => {
+export const emailExiste = async(correo = '') => {
     
     const validacionCorreo = await Usuario.findOne({ correo });
     if ( validacionCorreo ) {
@@ -16,4 +17,15 @@ export const emailExiste = async( correo = ' ') => {
     };
 
 }
+
+export const existeUsuarioPorId = async (id) => {
+    if (mongoose.Types.ObjectId.isValid(id)) {
+            const existeUsuario = await Usuario.findById(id);
+
+        if ( !existeUsuario ) {
+                throw new Error(`El usuario con ID: '${id}' no existe en la DB`);
+            }
+        
+        } 
+};
 
