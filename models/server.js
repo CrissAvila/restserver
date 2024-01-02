@@ -2,7 +2,9 @@ import express from "express";
 import cors from "cors";
 import router from "../routes/user.js";
 import { dbConection } from "../database/config.js";
+import dotenv from 'dotenv';
 
+dotenv.config();
 
 export class Server {
 
