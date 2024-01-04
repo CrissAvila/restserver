@@ -2,6 +2,8 @@ import { Router } from "express";
 import { check } from "express-validator";
 
 import { validarCampos } from "../middlewares/validar-campos.js";
+import { validarJWT } from "../middlewares/validar-jwt.js";
+
 import { emailExiste, esRolValido, existeUsuarioPorId,  }from "../helpers/db-validators.js";
 
 import { usuariosGet, 
@@ -10,7 +12,7 @@ import { usuariosGet,
          usuariosDelete,
          usuariosPatch,} from "../controllers/user.js";
 
-const router = Router();
+const router = Router(); 
 
 router.get('/', usuariosGet );
 
@@ -32,10 +34,11 @@ router.post('/', [
 ], usuariosPost );
 
 router.delete('/:id',[
-    check('id').custom( existeUsuarioPorId ),
+    validarJWT,
     check('id', 'No es un ID valido').isMongoId(),
+    check('id').custom( existeUsuarioPorId ),
     validarCampos
-], usuariosDelete);
+], usuariosDelete );
 
 router.patch('/', usuariosPatch);
 

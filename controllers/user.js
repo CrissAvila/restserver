@@ -70,8 +70,7 @@ export const usuariosDelete = async(req = request , res = response) => {
     const borrarUsuario = await Usuario.findByIdAndUpdate( id, { estado: false });
 
     res.json({
-        msg: 'delete API - controlador',
-        msg: `Se Elimino el usuario ${ id } correctamente(estado:false)`, 
+        msg: `Se Elimino el usuario correctamente(estado:false)`, 
         borrarUsuario,
     })
 }
