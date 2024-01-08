@@ -3,6 +3,7 @@ import { check } from "express-validator";
 
 import { validarCampos } from "../middlewares/validar-campos.js";
 import { validarJWT } from "../middlewares/validar-jwt.js";
+import { esAdminRole, tieneRole } from "../middlewares/validar-roles.js";
 
 import { emailExiste, esRolValido, existeUsuarioPorId,  }from "../helpers/db-validators.js";
 
@@ -35,6 +36,8 @@ router.post('/', [
 
 router.delete('/:id',[
     validarJWT,
+    // esAdminRole,
+    tieneRole('ADMIN_ROL', 'VENTAS_ROL', ),
     check('id', 'No es un ID valido').isMongoId(),
     check('id').custom( existeUsuarioPorId ),
     validarCampos
