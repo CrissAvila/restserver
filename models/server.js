@@ -1,8 +1,9 @@
 import express from "express";
 import cors from "cors";
 
-import router from "../routes/user.js";
 import routerAuth from "../routes/auth.js";
+import routerCategories from "../routes/categories.js";
+import router from "../routes/user.js";
 
 import { dbConection } from "../database/config.js";
 import dotenv from 'dotenv';
@@ -18,6 +19,7 @@ export class Server {
         //Paths
         this.usuariosPath = '/api/usuarios';
         this.authPath = '/api/auth';
+        this.categoriesPath = '/api/categories'
 
         //Conectar a base de datos
         this.conectarDB();
@@ -51,9 +53,11 @@ export class Server {
     routes() {
         const usarRoutes = router;
         const usarRoutesAuth = routerAuth;
-        
+        const usarRoutesCategories = routerCategories;
+
         this.app.use( this.authPath, usarRoutesAuth);
         this.app.use( this.usuariosPath, usarRoutes);
+        this.app.use( this.categoriesPath, usarRoutesCategories);
 
     }
 
