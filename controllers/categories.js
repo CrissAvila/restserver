@@ -2,7 +2,7 @@ import { request, response } from "express";
 import Categoria from "../models/categoria.js";
 
 //Obtener Categorias - paginado - total - populate 
-export const ObtenerCategorias = async( req = request, res = response ) => {
+export const obtenerCategorias = async( req = request, res = response ) => {
 
     const { limite = 5, desde = 0 } = req.query;
     const estadoQuery = { estado: true }
@@ -11,9 +11,9 @@ export const ObtenerCategorias = async( req = request, res = response ) => {
     const [ totalUsuarios, categorias ] = await Promise.all([
         Categoria.countDocuments( estadoQuery ),
         Categoria.find( estadoQuery )
-        .populate('usuario', 'nombre')
-        .skip( desde )
-        .limit( limite )
+            .populate('usuario', 'nombre')
+            .skip( desde )
+            .limit( limite )
     ]);
 
     res.json({
@@ -22,8 +22,17 @@ export const ObtenerCategorias = async( req = request, res = response ) => {
     })
 }
 
-//ObtenerCategoria - populate 
+//ObtenerCategoria - populate}
+export const obtenerCategoria = async( req = request, res = response ) => {
+    const { id } = req.params;
+    const categoria = await Categoria.findById( id )
+                                    .populate('usuario', 'nombre');
 
+    res.json( categoria );
+} 
+
+
+// Crear Categoria
 export const crearCategoria = async( req = request, res = response ) => {
 
     const nombre = req.body.nombre.toUpperCase();
@@ -52,5 +61,25 @@ export const crearCategoria = async( req = request, res = response ) => {
 };
 
 // Actualizar Categoria 
+export const actualizarCategoria = async( req = request, res = response ) => {
+
+    const { id } = req.params;
+    const { estado, usuario, ...data  } = req.body;
+
+    data.nombre = data.nombre.toUpperCase();
+    data.usuario = req.usuario._id;
+
+    const categoria = await Categoria.findByIdAndUpdate( id, data, { new: true });
+
+    res.json ( categoria );
+};
 
 // Borrar Categoria - estado : false 
+
+export const borrarCategoria = async( req = request, res = response ) => {
+    
+    const { id } = req.params;
+    const borrarCategoria = await Categoria.findByIdAndUpdate( id, { estado: false }, { new: true });
+
+    res.json( borrarCategoria );
+}
