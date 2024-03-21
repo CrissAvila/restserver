@@ -34,7 +34,6 @@ export const obtenerProducto = async( req = request, res = response ) => {
     res.json( producto );
 } 
 
-
 // Crear Producto
 export const crearProducto = async( req = request, res = response ) => {
 
