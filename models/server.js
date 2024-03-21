@@ -3,6 +3,7 @@ import cors from "cors";
 
 import routerAuth from "../routes/auth.js";
 import routerCategories from "../routes/categories.js";
+import routerProductos from "../routes/productos.js";
 import router from "../routes/user.js";
 
 import { dbConection } from "../database/config.js";
@@ -20,6 +21,7 @@ export class Server {
         this.usuariosPath = '/api/usuarios';
         this.authPath = '/api/auth';
         this.categoriesPath = '/api/categories'
+        this.productosPath = '/api/productos'
 
         //Conectar a base de datos
         this.conectarDB();
@@ -54,10 +56,12 @@ export class Server {
         const usarRoutes = router;
         const usarRoutesAuth = routerAuth;
         const usarRoutesCategories = routerCategories;
+        const usarRoutesProductos = routerProductos;
 
         this.app.use( this.authPath, usarRoutesAuth);
         this.app.use( this.usuariosPath, usarRoutes);
         this.app.use( this.categoriesPath, usarRoutesCategories);
+        this.app.use( this.productosPath, usarRoutesProductos);
 
     }
 
