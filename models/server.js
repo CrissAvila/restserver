@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 
 import routerAuth from "../routes/auth.js";
+import routerBuscar from "../routes/buscar.js";
 import routerCategories from "../routes/categories.js";
 import routerProductos from "../routes/productos.js";
 import router from "../routes/user.js";
@@ -18,10 +19,11 @@ export class Server {
         this.port = process.env.PORT;
 
         //Paths
-        this.usuariosPath = '/api/usuarios';
-        this.authPath = '/api/auth';
-        this.categoriesPath = '/api/categories'
-        this.productosPath = '/api/productos'
+        this.authPath =       '/api/auth';
+        this.buscarPath =     '/api/buscar';
+        this.categoriesPath = '/api/categories';
+        this.productosPath =  '/api/productos';
+        this.usuariosPath =   '/api/usuarios';
 
         //Conectar a base de datos
         this.conectarDB();
@@ -53,15 +55,17 @@ export class Server {
     }
 
     routes() {
-        const usarRoutes = router;
         const usarRoutesAuth = routerAuth;
+        const usarRoutesBuscar = routerBuscar;
         const usarRoutesCategories = routerCategories;
+        const usarRoutes = router;
         const usarRoutesProductos = routerProductos;
 
         this.app.use( this.authPath, usarRoutesAuth);
-        this.app.use( this.usuariosPath, usarRoutes);
+        this.app.use( this.buscarPath, usarRoutesBuscar );
         this.app.use( this.categoriesPath, usarRoutesCategories);
         this.app.use( this.productosPath, usarRoutesProductos);
+        this.app.use( this.usuariosPath, usarRoutes);
 
     }
 
