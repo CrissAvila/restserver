@@ -9,6 +9,7 @@ import router from "../routes/user.js";
 
 import { dbConection } from "../database/config.js";
 import dotenv from 'dotenv';
+import routerUploads from "../routes/uploads.js";
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ export class Server {
         this.categoriesPath = '/api/categories';
         this.productosPath =  '/api/productos';
         this.usuariosPath =   '/api/usuarios';
+        this.uploadsPath =    '/api/uploads';
 
         //Conectar a base de datos
         this.conectarDB();
@@ -60,12 +62,14 @@ export class Server {
         const usarRoutesCategories = routerCategories;
         const usarRoutes = router;
         const usarRoutesProductos = routerProductos;
+        const usarRoutesUploads = routerUploads;
 
         this.app.use( this.authPath, usarRoutesAuth);
         this.app.use( this.buscarPath, usarRoutesBuscar );
         this.app.use( this.categoriesPath, usarRoutesCategories);
         this.app.use( this.productosPath, usarRoutesProductos);
         this.app.use( this.usuariosPath, usarRoutes);
+        this.app.use( this.uploadsPath, usarRoutesUploads);
 
     }
 
