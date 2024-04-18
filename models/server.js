@@ -10,6 +10,7 @@ import router from "../routes/user.js";
 import { dbConection } from "../database/config.js";
 import dotenv from 'dotenv';
 import routerUploads from "../routes/uploads.js";
+import fileUpload from "express-fileupload";
 
 dotenv.config();
 
@@ -49,6 +50,16 @@ export class Server {
 
         //Directorio Publico
         this.app.use( express.static('public') );
+
+        // Fileupload - carga de archivos
+        this.app.use( fileUpload({
+            useTempFiles : true,
+            tempFileDir : '/tmp/',
+            createParentPath: true,
+            
+        }));
+
+
     }
 
     // METODOS
